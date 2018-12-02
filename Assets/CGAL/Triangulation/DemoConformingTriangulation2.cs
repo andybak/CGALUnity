@@ -14,7 +14,7 @@ using CGAL.Triangulation.Conforming;
 namespace CGALDemo
 {
 
-    public class DemoConformingTriangulation : MonoBehaviour
+    public class DemoConformingTriangulation2 : MonoBehaviour
     {
 
         //HBMesh<HBVertex2f, HBEdge, HBFace> mesh;
