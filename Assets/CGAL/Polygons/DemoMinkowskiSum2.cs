@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common.Core.LinearAlgebra;
-using Common.Unity.Drawing;
 using CGAL.Polygons;
 
 namespace CGALDemo
@@ -28,14 +27,13 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
 
             polygon.MakeCCW();
             polygon.BuildIndices();
             polygon.BuildHoleIndices();
 
-            if (polygon.IsSimple)
+            if (polygon.IsSimple && !polygon.HasHoles)
             {
                 Polygon2f A = shape;
                 Polygon2f B = polygon;
@@ -54,7 +52,6 @@ namespace CGALDemo
 
         protected override void OnPolygonCleared()
         {
-            LineColor = Color.red;
             sum = null;
         }
 
@@ -73,9 +70,9 @@ namespace CGALDemo
             {
                 GUI.Label(new Rect(10, 10, textLen, textHeight), "Space to clear polygon.");
 
-                if (!polygon.IsSimple)
+                if (!polygon.IsSimple || polygon.HasHoles)
                 {
-                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must be simple. Clear and start again.");
+                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must be simple with no holes. Clear and start again.");
                 }
                 else if (polygon.Orientation != ORIENTATION.COUNTERCLOCKWISE)
                 {
@@ -98,40 +95,16 @@ namespace CGALDemo
                 Camera cam = Camera.current;
                 if (cam == null) return;
 
-                Matrix4x4f m;
-
                 foreach (var p in polygon.Positions)
                 {
-                    m = Matrix4x4f.Translate(p.xy0);
-                    DrawPolygon(cam, shape, Color.red, m);
+                    Matrix4x4f m = Matrix4x4f.Translate(p.xy0);
+                    DrawPolygon(cam, shape, Color.red, Color.yellow, m);
                 }
 
-                m = Matrix4x4f.Identity;
-
-                DrawPolygon(cam, polygon, Color.green, m);
-                DrawPolygon(cam, sum, Color.blue, m);
+                DrawPolygon(cam, polygon, Color.green, Color.yellow);
+                DrawPolygon(cam, sum, Color.blue, Color.yellow);
             }
 
         }
-
-        private void DrawPolygon(Camera cam, Polygon2f polygon, Color col, Matrix4x4f m)
-        {
-            if (polygon == null) return;
-
-            DrawLines.LineMode = LINE_MODE.LINES;
-            DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-
-            DrawLines.Draw(cam, polygon.Positions, col, m, polygon.Indices);
-            DrawVertices.Draw(cam, 0.02f, polygon.Positions, Color.yellow, m);
-
-            if (!polygon.HasHoles) return;
-
-            foreach (var hole in polygon.Holes)
-            {
-                DrawLines.Draw(cam, hole.Positions, Color.green, m, hole.Indices);
-                DrawVertices.Draw(cam, 0.02f, hole.Positions, Color.yellow, m);
-            }
-        }
-
     }
 }

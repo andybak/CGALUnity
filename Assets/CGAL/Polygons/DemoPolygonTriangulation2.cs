@@ -27,7 +27,6 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
 
             polygon.MakeCCW();
@@ -54,11 +53,6 @@ namespace CGALDemo
                 mesh = new Mesh2f(0, 0);
             }
 
-        }
-
-        protected override void OnPolygonCleared()
-        {
-            LineColor = Color.red;
         }
 
         protected void OnGUI()
@@ -119,7 +113,7 @@ namespace CGALDemo
                 DrawBase.Orientation = DRAW_ORIENTATION.XY;
                 Matrix4x4f m = Matrix4x4f.Identity;
 
-                DrawLines.Draw(cam, mesh.Positions, Color.blue, m, mesh.Indices);
+                DrawLines.Draw(cam, mesh.Positions, Color.green, m, mesh.Indices);
                 DrawVertices.Draw(cam, 0.02f, mesh.Positions, Color.yellow, m);
             }
 

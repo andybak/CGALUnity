@@ -16,20 +16,21 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
             polygon.MakeCCW();
             polygon.BuildIndices();
             polygon.BuildHoleIndices();
 
-            simplified = PolygonSimplify2.Simplify(polygon, 0.5f, SIMPLIFY_METHOD.SQUARE_DIST);
-            simplified.BuildIndices();
+            if (polygon.IsSimple && !polygon.HasHoles)
+            {
+                simplified = PolygonSimplify2.Simplify(polygon, 0.5f, SIMPLIFY_METHOD.SQUARE_DIST);
+                simplified.BuildIndices();
+            }
+            else
+            {
+                simplified = null;
+            }
 
-        }
-
-        protected override void OnPolygonCleared()
-        {
-            LineColor = Color.red;
         }
 
         protected void OnGUI()
@@ -46,10 +47,15 @@ namespace CGALDemo
             else
             {
                 GUI.Label(new Rect(10, 10, textLen, textHeight), "Space to clear polygon.");
-                GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon is Simple = " + polygon.IsSimple);
-                GUI.Label(new Rect(10, 50, textLen, textHeight), "Polygon is Convex = " + polygon.IsConvex);
-                GUI.Label(new Rect(10, 70, textLen, textHeight), "Polygon area = " + polygon.Area);
-                GUI.Label(new Rect(10, 90, textLen, textHeight), "Polygon Orientation = " + polygon.Orientation);
+
+                if (!polygon.IsSimple || polygon.HasHoles)
+                {
+                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must be simple with no holes. Clear and start again.");
+                }
+                else if (polygon.Orientation != ORIENTATION.COUNTERCLOCKWISE)
+                {
+                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must have ccw orientation. Clear and start again.");
+                }
             }
 
         }
@@ -65,13 +71,8 @@ namespace CGALDemo
                 Camera cam = Camera.current;
                 if (cam == null) return;
 
-                Matrix4x4f m = Matrix4x4f.Identity;
-
-                DrawLines.LineMode = LINE_MODE.LINES;
-                DrawLines.Draw(cam, simplified.Positions, LineColor, m, simplified.Indices);
-
-                DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-                DrawVertices.Draw(cam, 0.02f, simplified.Positions, Color.yellow, m);
+                DrawPolygon(cam, polygon, Color.green, Color.yellow);
+                DrawPolygon(cam, simplified, Color.green, Color.yellow);
             }
 
         }

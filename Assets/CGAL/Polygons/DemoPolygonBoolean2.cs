@@ -26,8 +26,6 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f _input)
         {
-            LineColor = Color.red;
-
             input = _input;
 
             input.MakeCCW();
@@ -44,6 +42,10 @@ namespace CGALDemo
             }
             else if(polygons[0].IsSimple)
             {
+                //Only does the boolean of the first polygon 
+                //in scene and the input polygon.
+                //Both polyons must be simple.
+
                 Polygon2f A = polygons[0];
                 Polygon2f B = input;
                 polygons.Clear();
@@ -86,7 +88,6 @@ namespace CGALDemo
 
         protected override void OnPolygonCleared()
         {
-            LineColor = Color.red;
             polygons.Clear();
         }
 
@@ -98,7 +99,7 @@ namespace CGALDemo
             GUI.Label(new Rect(10, 10, textLen, textHeight), "Space to clear polygon.");
             GUI.Label(new Rect(10, 30, textLen, textHeight), "Left click to place point.");
             GUI.Label(new Rect(10, 50, textLen, textHeight), "Click on first point to close polygon.");
-            GUI.Label(new Rect(10, 70, textLen, textHeight), "Mode = " + mode);
+            GUI.Label(new Rect(10, 70, textLen, textHeight), "Up/down arrow to change mode. Mode = " + mode);
 
             if (input != null)
             {
@@ -123,7 +124,7 @@ namespace CGALDemo
 
             for (int i = 0; i < polygons.Count; i++)
             {
-                DrawPolygon(cam, polygons[i], Color.green);
+                DrawPolygon(cam, polygons[i], Color.green, Color.yellow);
             }
 
         }
@@ -141,24 +142,6 @@ namespace CGALDemo
             {
                 uint i = (uint)mode - 1;
                 mode = (BOOL_MODE)(i % 4);
-            }
-        }
-
-        private void DrawPolygon(Camera cam, Polygon2f polygon, Color col)
-        {
-            DrawLines.LineMode = LINE_MODE.LINES;
-            DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-            Matrix4x4f m = Matrix4x4f.Identity;
-
-            DrawLines.Draw(cam, polygon.Positions, col, m, polygon.Indices);
-            DrawVertices.Draw(cam, 0.02f, polygon.Positions, Color.yellow, m);
-
-            if (!polygon.HasHoles) return;
-
-            foreach (var hole in polygon.Holes)
-            {
-                DrawLines.Draw(cam, hole.Positions, Color.green, m, hole.Indices);
-                DrawVertices.Draw(cam, 0.02f, hole.Positions, Color.yellow, m);
             }
         }
 

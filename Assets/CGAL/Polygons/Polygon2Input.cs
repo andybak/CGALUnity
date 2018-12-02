@@ -177,9 +177,12 @@ namespace CGALDemo
 
         protected void DrawPolygon(Camera cam, Polygon2f polygon, Color lineColor, Color vertColor)
         {
-            if (polygon == null) return;
+            DrawPolygon(cam, polygon, lineColor, vertColor, Matrix4x4f.Identity);
+        }
 
-            Matrix4x4f m = Matrix4x4f.Identity;
+        protected void DrawPolygon(Camera cam, Polygon2f polygon, Color lineColor, Color vertColor, Matrix4x4f m)
+        {
+            if (polygon == null) return;
 
             DrawLines.LineMode = LINE_MODE.LINES;
             DrawVertices.Orientation = DRAW_ORIENTATION.XY;

@@ -24,7 +24,6 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
             polygon.BuildIndices();
             polygon.BuildHoleIndices();
@@ -33,7 +32,6 @@ namespace CGALDemo
 
         protected override void OnPolygonCleared()
         {
-            LineColor = Color.red;
             result = null;
         }
 
@@ -63,23 +61,8 @@ namespace CGALDemo
             {
                 Camera cam = Camera.current;
                 if (cam == null) return;
-                if (polygon == null) return;
 
-                Matrix4x4f m = Matrix4x4f.Identity;
-
-                DrawLines.LineMode = LINE_MODE.LINES;
-                DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-
-                DrawLines.Draw(cam, polygon.Positions, Color.green, m, polygon.Indices);
-                DrawVertices.Draw(cam, 0.02f, polygon.Positions, Color.yellow, m);
-
-                if (!polygon.HasHoles) return;
-
-                foreach (var hole in polygon.Holes)
-                {
-                    DrawLines.Draw(cam, hole.Positions, Color.green, m, hole.Indices);
-                    DrawVertices.Draw(cam, 0.02f, hole.Positions, Color.yellow, m);
-                }
+                DrawPolygon(cam, polygon, Color.green, Color.yellow);
             }
 
         }

@@ -25,7 +25,6 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
 
             polygon.MakeCCW();
@@ -50,7 +49,6 @@ namespace CGALDemo
 
         protected override void OnPolygonCleared()
         {
-            LineColor = Color.red;
             line = null;
         }
 
@@ -101,7 +99,7 @@ namespace CGALDemo
             }
             else
             {
-                DrawPolygon(cam, polygon, Color.green, m);
+                DrawPolygon(cam, polygon, Color.green, Color.yellow);
 
                 if (line != null)
                 {
@@ -111,25 +109,6 @@ namespace CGALDemo
 
             }
 
-        }
-
-        private void DrawPolygon(Camera cam, Polygon2f polygon, Color col, Matrix4x4f m)
-        {
-            if (polygon == null) return;
-
-            DrawLines.LineMode = LINE_MODE.LINES;
-            DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-
-            DrawLines.Draw(cam, polygon.Positions, col, m, polygon.Indices);
-            DrawVertices.Draw(cam, 0.02f, polygon.Positions, Color.yellow, m);
-
-            if (!polygon.HasHoles) return;
-
-            foreach (var hole in polygon.Holes)
-            {
-                DrawLines.Draw(cam, hole.Positions, Color.green, m, hole.Indices);
-                DrawVertices.Draw(cam, 0.02f, hole.Positions, Color.yellow, m);
-            }
         }
 
     }

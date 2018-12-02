@@ -23,14 +23,13 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
 
             polygon.MakeCCW();
             polygon.BuildIndices();
             polygon.BuildHoleIndices();
 
-            if (polygon.IsSimple)
+            if (polygon.IsSimple && !polygon.HasHoles)
             {
                 partition = PolygonPartition2.Partition(polygon, PARTITION_METHOD.OPTIMAL);
             }
@@ -48,11 +47,6 @@ namespace CGALDemo
 
         }
 
-        protected override void OnPolygonCleared()
-        {
-            LineColor = Color.red;
-        }
-
         protected void OnGUI()
         {
             int textLen = 400;
@@ -68,9 +62,9 @@ namespace CGALDemo
             {
                 GUI.Label(new Rect(10, 10, textLen, textHeight), "Space to clear polygon.");
 
-                if(!polygon.IsSimple)
+                if(!polygon.IsSimple || polygon.HasHoles)
                 {
-                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must be simple to partition. Clear and start again.");
+                    GUI.Label(new Rect(10, 30, textLen, textHeight), "Polygon must be simple with no holes. Clear and start again.");
                 }
                 else if (polygon.Orientation != ORIENTATION.COUNTERCLOCKWISE)
                 {
@@ -86,7 +80,7 @@ namespace CGALDemo
 
         protected override void OnPostRender()
         {
-            if (!MadePolygon || !polygon.IsSimple || polygon.Orientation != ORIENTATION.COUNTERCLOCKWISE)
+            if (!MadePolygon)
             {
                 base.OnPostRender();
             }
@@ -95,21 +89,10 @@ namespace CGALDemo
                 Camera cam = Camera.current;
                 if (cam == null) return;
 
-                Matrix4x4f m = Matrix4x4f.Identity;
+                DrawPolygon(cam, polygon, Color.green, Color.yellow);
 
-                int num = partition.Count;
-
-                for (int i = 0; i < num; i++)
-                {
-                    var poly = partition[i];
-
-                    DrawLines.LineMode = LINE_MODE.LINES;
-                    DrawLines.Draw(cam, poly.Positions, LineColor, m, poly.Indices);
-
-                    DrawVertices.Orientation = DRAW_ORIENTATION.XY;
-                    DrawVertices.Draw(cam, 0.02f, poly.Positions, Color.yellow, m);
-                }
-
+                foreach (var polygon in partition)
+                    DrawPolygon(cam, polygon, Color.green, Color.yellow);
             }
         }
 

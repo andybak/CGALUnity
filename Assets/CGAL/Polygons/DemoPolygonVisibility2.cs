@@ -18,7 +18,6 @@ namespace CGALDemo
 
         protected override void OnPolygonComplete(Polygon2f input)
         {
-            LineColor = Color.green;
             polygon = input;
             polygon.BuildIndices();
             polygon.BuildHoleIndices();
@@ -27,7 +26,6 @@ namespace CGALDemo
 
         protected override void OnPolygonCleared()
         {
-            LineColor = Color.red;
             polygon = null;
             visibility.Clear();
         }

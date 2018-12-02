@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68ce20d5a5d270646a186236f71accba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
+  mode: 0
 --- !u!81 &465998882
 AudioListener:
   m_ObjectHideFlags: 0

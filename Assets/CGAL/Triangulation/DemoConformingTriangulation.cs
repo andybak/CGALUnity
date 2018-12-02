@@ -23,8 +23,6 @@ namespace CGALDemo
 
         List<Vector2f> positions;
 
-        List<ColorRGBA> colors;
-
         List<int> indices;
 
         List<Vector2f> linePositions;
@@ -54,11 +52,6 @@ namespace CGALDemo
 
             indices = mesh.CreateFaceIndices(3);
 
-            System.Random rnd = new System.Random(0);
-            colors = new List<ColorRGBA>(count);
-            for (int i = 0; i < count; i++)
-                colors.Add(ColorRGBA.Random(rnd));
-
             CreateConnectionLines(mesh);
 
         }
@@ -76,7 +69,7 @@ namespace CGALDemo
 
             Matrix4x4f m = Matrix4x4f.Identity;
 
-            DrawFaces.Draw(cam, positions, Color.green, m, indices);
+            //DrawFaces.Draw(cam, positions, Color.green, m, indices);
             DrawLines.Draw(cam, positions, Color.blue, m, indices);
             //DrawVertices.Draw(cam, 0.02f, positions, Color.yellow, m);
 
@@ -85,6 +78,10 @@ namespace CGALDemo
 
         }
 
+        /// <summary>
+        /// Create the lines to show the connections between faces
+        /// for a face based mesh.
+        /// </summary>
         void CreateConnectionLines(FBMesh<FBVertex2f, FBFace> mesh)
         {
             linePositions = new List<Vector2f>();
@@ -122,6 +119,10 @@ namespace CGALDemo
 
         }
 
+        /// <summary>
+        /// Create the lines to show the connections between faces
+        /// for a half edge based mesh.
+        /// </summary>
         void CreateConnectionLines(HBMesh<HBVertex2f, HBEdge, HBFace> mesh)
         {
             linePositions = new List<Vector2f>();
